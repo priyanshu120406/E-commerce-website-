@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Deskwell – Desk &amp; Tech Store</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#eef2f7;--surface:#fff;--ink:#14213d;--muted:#5b6578;--line:#d6dde8;--accent:#f2b705;--accent-ink:#14213d;--ok:#12805c;--danger:#c23b22;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1524;--surface:#17213a;--ink:#eaf0fb;--muted:#9aa7c0;--line:#2a3756;--accent:#f2b705;--accent-ink:#14213d;--ok:#4cc79a;--danger:#ff8d75;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1524;--surface:#17213a;--ink:#eaf0fb;--muted:#9aa7c0;--line:#2a3756;--ok:#4cc79a;--danger:#ff8d75;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 Inter,system-ui,sans-serif}
+h1,h2,h3,.brand{font-family:"Bricolage Grotesque",Inter,system-ui,sans-serif;margin:0}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px 14px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:10}
+.brand{font-weight:800;font-size:22px;letter-spacing:-.5px;flex:1}
+.brand span{background:var(--accent);color:var(--accent-ink);padding:0 6px;border-radius:6px;margin-right:2px}
+.btn{border:1px solid var(--line);background:var(--surface);padding:8px 12px;border-radius:10px;font-weight:600}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.dark{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cartbtn{position:relative}
+.badge{position:absolute;top:-7px;right:-7px;background:var(--danger);color:#fff;border-radius:99px;font-size:11px;min-width:19px;height:19px;display:grid;place-items:center;padding:0 4px}
+.hero{padding:26px 16px 10px;max-width:1100px;margin:0 auto}
+.hero h1{font-size:clamp(30px,7vw,52px);line-height:1.02;letter-spacing:-1.5px;font-weight:800;max-width:14ch}
+.hero p{color:var(--muted);max-width:46ch;margin:10px 0 0}
+.tools{max-width:1100px;margin:14px auto 0;padding:0 16px;display:grid;gap:10px}
+.tools input,.tools select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.chip{white-space:nowrap;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 14px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+main{max-width:1100px;margin:0 auto;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.pic{font-size:56px;height:112px;display:grid;place-items:center;background:var(--bg)}
+.card .b{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.card h3{font-size:16px;font-weight:700}
+.meta{color:var(--muted);font-size:13px}
+.price{font-weight:700;font-size:17px}
+.price s{color:var(--muted);font-weight:400;font-size:13px;margin-left:4px}
+.card .btn{margin-top:auto}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+.overlay{position:fixed;inset:0;background:rgba(10,15,30,.55);z-index:20;display:none}
+.overlay.on{display:block}
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--surface);z-index:21;display:none;flex-direction:column;padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(14px + env(safe-area-inset-bottom,0px))}
+.panel.on{display:flex}
+.panel .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.panel .body{flex:1;overflow-y:auto}
+.line{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.line .e{font-size:30px;text-align:center}
+.qty{display:inline-flex;align-items:center;gap:8px;margin-top:4px}
+.qty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--bg)}
+.sum{padding-top:10px;display:grid;gap:6px}
+.sum div{display:flex;justify-content:space-between}
+.sum .tot{font-weight:800;font-size:18px}
+.coupon{display:flex;gap:8px;margin:10px 0}
+.coupon input,.f input{flex:1;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);width:100%}
+.f{display:grid;gap:8px;margin:8px 0}
+.f label{font-size:13px;color:var(--muted);display:grid;gap:3px}
+.msg{font-size:13px;min-height:18px}
+.ok{color:var(--ok)}.err{color:var(--danger)}
+.order{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px;background:var(--bg)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span>Desk</span>well</div>
+  <button class="btn" id="userBtn">Sign in</button>
+  <button class="btn dark cartbtn" id="cartBtn" aria-label="Open cart">Cart<span class="badge" id="count">0</span></button>
+</header>
+
+<section class="hero">
+  <h1>Gear for a better desk.</h1>
+  <p>Keyboards, lamps, audio and accessories. Free delivery above ₹2,999. Use code THIRANEX10 for 10% off.</p>
+</section>
+
+<div class="tools">
+  <input id="q" type="search" placeholder="Search products" aria-label="Search products">
+  <div class="row" id="cats"></div>
+  <select id="sort" aria-label="Sort products">
+    <option value="feat">Featured</option>
+    <option value="low">Price: low to high</option>
+    <option value="high">Price: high to low</option>
+    <option value="rate">Top rated</option>
+  </select>
+</div>
+
+<main><div class="grid" id="grid"></div></main>
+
+<div class="overlay" id="ov"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Panel"></aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const PRODUCTS=[
+{id:1,n:"Mechanical keyboard",c:"Keyboards",p:4499,o:5499,e:"⌨️",r:4.6,s:"Hot-swap switches, 75% layout"},
+{id:2,n:"Wireless mouse",c:"Accessories",p:1299,o:1599,e:"🖱️",r:4.4,s:"Silent clicks, 12-month battery"},
+{id:3,n:"Desk lamp",c:"Lighting",p:1899,o:2299,e:"💡",r:4.5,s:"Warm to cool, touch dimmer"},
+{id:4,n:"Noise-cancelling headphones",c:"Audio",p:6999,o:8999,e:"🎧",r:4.7,s:"40-hour battery, USB-C"},
+{id:5,n:"Laptop stand",c:"Accessories",p:999,o:1299,e:"💻",r:4.3,s:"Aluminium, folds flat"},
+{id:6,n:"Webcam 1080p",c:"Accessories",p:2499,o:2999,e:"📷",r:4.2,s:"Autofocus, privacy shutter"},
+{id:7,n:"Bluetooth speaker",c:"Audio",p:2199,o:2799,e:"🔊",r:4.4,s:"IPX5, 12-hour playtime"},
+{id:8,n:"Monitor light bar",c:"Lighting",p:2799,o:3299,e:"🔆",r:4.6,s:"No screen glare, USB powered"},
+{id:9,n:"Compact keyboard",c:"Keyboards",p:1799,o:2199,e:"🎹",r:4.1,s:"Low profile, 3-device pairing"},
+{id:10,n:"USB-C hub 7-in-1",c:"Accessories",p:1999,o:2599,e:"🔌",r:4.5,s:"HDMI 4K, SD card, 100W pass-through"},
+{id:11,n:"Earbuds",c:"Audio",p:1599,o:2199,e:"🎵",r:4.0,s:"Low latency, 24-hour case"},
+{id:12,n:"Desk mat XL",c:"Accessories",p:799,o:999,e:"🟦",r:4.3,s:"Water resistant, stitched edges"}
+];
+const FREE_AT=2999;
+const rs=n=>"₹"+n.toLocaleString("en-IN");
+const $=id=>document.getElementById(id);
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let state={cat:"All",q:"",sort:"feat",cart:store.get("dw_cart",[]),user:store.get("dw_user",null),coupon:null};
+const save=()=>{store.set("dw_cart",state.cart);store.set("dw_user",state.user)};
+
+function toast(t){const el=$("toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),1800)}
+
+function renderCats(){
+  const cats=["All",...new Set(PRODUCTS.map(p=>p.c))];
+  $("cats").innerHTML=cats.map(c=>`<button class="chip" aria-pressed="${c===state.cat}" data-c="${c}">${c}</button>`).join("");
+}
+function renderGrid(){
+  let list=PRODUCTS.filter(p=>(state.cat==="All"||p.c===state.cat)&&p.n.toLowerCase().includes(state.q.toLowerCase()));
+  if(state.sort==="low")list.sort((a,b)=>a.p-b.p);
+  if(state.sort==="high")list.sort((a,b)=>b.p-a.p);
+  if(state.sort==="rate")list.sort((a,b)=>b.r-a.r);
+  $("grid").innerHTML=list.length?list.map(p=>`<article class="card"><div class="pic" aria-hidden="true">${p.e}</div><div class="b"><h3>${p.n}</h3><div class="meta">${p.s}</div><div class="meta">★ ${p.r}</div><div class="price">${rs(p.p)}<s>${rs(p.o)}</s></div><button class="btn primary" data-add="${p.id}">Add to cart</button></div></article>`).join(""):`<div class="empty" style="grid-column:1/-1">No products match “${state.q}”. Try a different search or category.</div>`;
+}
+function totals(){
+  const sub=state.cart.reduce((s,i)=>s+PRODUCTS.find(p=>p.id===i.id).p*i.q,0);
+  const disc=state.coupon?Math.round(sub*0.10):0;
+  const after=sub-disc;
+  const ship=after===0||after>=FREE_AT?0:99;
+  return{sub,disc,ship,total:after+ship};
+}
+function updateCount(){$("count").textContent=state.cart.reduce((s,i)=>s+i.q,0)}
+function add(id){
+  const it=state.cart.find(i=>i.id===id);
+  it?it.q++:state.cart.push({id,q:1});
+  save();updateCount();toast("Added to cart");
+}
+function openPanel(html){$("panel").innerHTML=html;$("panel").classList.add("on");$("ov").classList.add("on")}
+function closePanel(){$("panel").classList.remove("on");$("ov").classList.remove("on")}
+
+function showCart(){
+  const t=totals();
+  const lines=state.cart.length?state.cart.map(i=>{const p=PRODUCTS.find(x=>x.id===i.id);return`<div class="line"><div class="e">${p.e}</div><div><strong>${p.n}</strong><div class="meta">${rs(p.p)} each</div><div class="qty"><button data-dec="${p.id}" aria-label="Decrease">−</button><span>${i.q}</span><button data-inc="${p.id}" aria-label="Increase">+</button></div></div><div><strong>${rs(p.p*i.q)}</strong></div></div>`}).join(""):`<div class="empty">Your cart is empty. Add a product to get started.</div>`;
+  openPanel(`<div class="head"><h2>Your cart</h2><button class="btn" data-close>Close</button></div>
+  <div class="body">${lines}</div>
+  ${state.cart.length?`<div class="coupon"><input id="cp" placeholder="Coupon code" value="${state.coupon||""}"><button class="btn" id="applyCp">Apply</button></div><div class="msg" id="cpMsg"></div>
+  <div class="sum"><div><span>Subtotal</span><span>${rs(t.sub)}</span></div>${t.disc?`<div><span>Discount (10%)</span><span>−${rs(t.disc)}</span></div>`:""}<div><span>Delivery</span><span>${t.ship?rs(t.ship):"Free"}</span></div><div class="tot"><span>Total</span><span>${rs(t.total)}</span></div></div>
+  <button class="btn primary" style="margin-top:12px;padding:12px" id="toCheckout">Checkout</button>`:""}`);
+}
+function showCheckout(){
+  if(!state.user){showLogin(true);return}
+  const t=totals();
+  openPanel(`<div class="head"><h2>Checkout</h2><button class="btn" id="backCart">Back</button></div>
+  <div class="body"><div class="f">
+  <label>Full name<input id="ck_n" value="${state.user.name}"></label>
+  <label>Phone<input id="ck_p" inputmode="tel" maxlength="10" placeholder="10-digit mobile number"></label>
+  <label>Address<input id="ck_a" placeholder="House no., street, city"></label>
+  <label>PIN code<input id="ck_z" inputmode="numeric" maxlength="6" placeholder="6 digits"></label></div>
+  <div class="msg err" id="ckMsg"></div>
+  <div class="sum"><div><span>Items</span><span>${state.cart.reduce((s,i)=>s+i.q,0)}</span></div><div class="tot"><span>Pay on delivery</span><span>${rs(t.total)}</span></div></div></div>
+  <button class="btn primary" style="padding:12px" id="place">Place order</button>`);
+}
+function placeOrder(){
+  const n=$("ck_n").value.trim(),p=$("ck_p").value.trim(),a=$("ck_a").value.trim(),z=$("ck_z").value.trim();
+  const m=$("ckMsg");
+  if(n.length<2)return m.textContent="Enter your full name.";
+  if(!/^[6-9]\d{9}$/.test(p))return m.textContent="Enter a valid 10-digit mobile number.";
+  if(a.length<8)return m.textContent="Enter your full address.";
+  if(!/^\d{6}$/.test(z))return m.textContent="Enter a 6-digit PIN code.";
+  const t=totals();
+  const orders=store.get("dw_orders",[]);
+  const id="DW"+Date.now().toString().slice(-7);
+  orders.unshift({id,user:state.user.email,date:new Date().toLocaleDateString("en-IN"),total:t.total,items:state.cart.map(i=>({n:PRODUCTS.find(p=>p.id===i.id).n,q:i.q})),status:"Confirmed"});
+  store.set("dw_orders",orders);
+  state.cart=[];state.coupon=null;save();updateCount();
+  openPanel(`<div class="head"><h2>Order placed</h2><button class="btn" data-close>Close</button></div><div class="body"><div class="empty"><div style="font-size:48px">✅</div><p>Thanks, ${n}. Your order <strong>${id}</strong> of ${rs(t.total)} is confirmed. Pay when it arrives.</p></div></div>`);
+}
+function showLogin(thenCheckout){
+  openPanel(`<div class="head"><h2>Sign in</h2><button class="btn" data-close>Close</button></div>
+  <div class="body"><p class="meta">New here? Entering your details creates an account on this device.</p><div class="f">
+  <label>Name<input id="lg_n" autocomplete="name"></label>
+  <label>Email<input id="lg_e" type="email" autocomplete="email"></label>
+  <label>Password (min 6 characters)<input id="lg_p" type="password" autocomplete="current-password"></label></div>
+  <div class="msg err" id="lgMsg"></div></div>
+  <button class="btn primary" style="padding:12px" id="doLogin" data-next="${thenCheckout?1:0}">Continue</button>`);
+}
+async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+async function doLogin(next){
+  const n=$("lg_n").value.trim(),e=$("lg_e").value.trim().toLowerCase(),p=$("lg_p").value;
+  const m=$("lgMsg");
+  if(n.length<2)return m.textContent="Enter your name.";
+  if(!/^\S+@\S+\.\S+$/.test(e))return m.textContent="Enter a valid email address.";
+  if(p.length<6)return m.textContent="Password must be at least 6 characters.";
+  let users;try{users=store.get("dw_users",{});}catch(x){users={}}
+  const h=await sha(p);
+  if(users[e]&&users[e].h!==h)return m.textContent="Wrong password for this email.";
+  if(!users[e]){users[e]={n,h};store.set("dw_users",users)}
+  state.user={name:users[e].n,email:e};save();renderUser();
+  next?showCheckout():(closePanel(),toast("Signed in"));
+}
+function showAccount(){
+  const orders=store.get("dw_orders",[]).filter(o=>o.user===state.user.email);
+  openPanel(`<div class="head"><h2>Hi, ${state.user.name}</h2><button class="btn" data-close>Close</button></div>
+  <div class="body"><h3 style="margin:6px 0 10px">Your orders</h3>${orders.length?orders.map(o=>`<div class="order"><strong>${o.id}</strong> · ${o.date}<div class="meta">${o.items.map(i=>i.n+" × "+i.q).join(", ")}</div><div>${rs(o.total)} <span class="ok">${o.status}</span></div></div>`).join(""):`<div class="empty">No orders yet. Your orders will appear here.</div>`}</div>
+  <button class="btn" id="logout" style="padding:12px">Sign out</button>`);
+}
+function renderUser(){$("userBtn").textContent=state.user?state.user.name.split(" ")[0]:"Sign in"}
+
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button,.overlay");if(!t)return;
+  if(t.dataset.add)return add(+t.dataset.add);
+  if(t.dataset.c){state.cat=t.dataset.c;renderCats();return renderGrid()}
+  if(t.dataset.inc||t.dataset.dec){
+    const id=+(t.dataset.inc||t.dataset.dec),it=state.cart.find(i=>i.id===id);
+    it.q+=t.dataset.inc?1:-1;
+    if(it.q<1)state.cart=state.cart.filter(i=>i.id!==id);
+    save();updateCount();return showCart();
+  }
+  if(t.id==="applyCp"){
+    const v=$("cp").value.trim().toUpperCase();
+    if(v==="THIRANEX10"){state.coupon=v;showCart();$("cpMsg").textContent="Coupon applied: 10% off.";$("cpMsg").className="msg ok"}
+    else{state.coupon=null;showCart();$("cpMsg").textContent="That code isn’t valid. Check it and try again.";$("cpMsg").className="msg err"}
+    return;
+  }
+  if(t.id==="cartBtn")return showCart();
+  if(t.id==="userBtn")return state.user?showAccount():showLogin(false);
+  if(t.id==="toCheckout")return showCheckout();
+  if(t.id==="backCart")return showCart();
+  if(t.id==="place")return placeOrder();
+  if(t.id==="doLogin")return doLogin(t.dataset.next==="1");
+  if(t.id==="logout"){state.user=null;save();renderUser();closePanel();return toast("Signed out")}
+  if(t.hasAttribute("data-close")||t.id==="ov")return closePanel();
+});
+$("q").addEventListener("input",e=>{state.q=e.target.value;renderGrid()});
+$("sort").addEventListener("change",e=>{state.sort=e.target.value;renderGrid()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closePanel()});
+renderCats();renderGrid();renderUser();updateCount();
+</script>
+</body>
+</html>
